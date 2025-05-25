@@ -6,26 +6,32 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class StockService {
+
     @Autowired
     private StockRepository stockRepository;
 
-    public List<Stock> getStock(){
-        return stockRepository.obtenerStock();
+    // Listar todos los stocks
+    public List<Stock> getStocks() {
+        return stockRepository.findAll();
     }
-    public Stock obtenerStockPorId(int id){
-        return stockRepository.buscarStockPorId(id);
+
+    // Buscar stock por ID
+    public Optional<Stock> getStock(int id) {
+        return stockRepository.findById((long) id);
     }
-    public Stock guardarStock(Stock stock){
-        return stockRepository.guardarStock(stock);
+
+    // Guardar o actualizar stock
+    public Stock guardarStock(Stock stock) {
+        return stockRepository.save(stock);
     }
-    public Stock editarStock(Stock stock){
-        return stockRepository.editarStock(stock);
-    }
-    public String eliminarStockPorId(int id){
-        stockRepository.borrarStock(id);
-        return "Stock eliminado con exito";
+
+    // Eliminar stock por ID
+    public String deleteStock(int id) {
+        stockRepository.deleteById((long) id);
+        return "Stock eliminado con éxito";
     }
 }

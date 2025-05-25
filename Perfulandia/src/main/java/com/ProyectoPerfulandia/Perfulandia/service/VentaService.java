@@ -6,29 +6,32 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class VentaService {
+
     @Autowired
     private VentaRepository ventaRepository;
 
-    public List<Venta> getVentas(){
-        return ventaRepository.obtenerVentas();
+    // Listar todas las ventas
+    public List<Venta> getVentas() {
+        return ventaRepository.findAll();
     }
-    public Venta buscarVentaPorId(int id){
-        return ventaRepository.buscarVentaPorId(id);
+
+    // Buscar venta por ID
+    public Optional<Venta> getVenta(int id) {
+        return ventaRepository.findById(id);
     }
-    public Venta buscarVentaPorFactura(String factura){
-        return ventaRepository.buscarVentaPorFactura(factura);
+
+    // Guardar o actualizar venta
+    public Venta guardarVenta(Venta venta) {
+        return ventaRepository.save(venta);
     }
-    public Venta guardarVenta(Venta venta){
-        return ventaRepository.guardarVenta(venta);
-    }
-    public Venta editarVenta(Venta venta){
-        return ventaRepository.editarVenta(venta);
-    }
-    public String eliminarVenta(int id){
-        ventaRepository.borrarVentaPorId(id);
-        return "Venta eliminada con exito";
+
+    // Eliminar venta por ID
+    public String deleteVenta(int id) {
+        ventaRepository.deleteById(id);
+        return "Venta eliminada con éxito";
     }
 }

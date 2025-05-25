@@ -3,6 +3,7 @@ package com.ProyectoPerfulandia.Perfulandia.controller;
 import com.ProyectoPerfulandia.Perfulandia.model.Venta;
 import com.ProyectoPerfulandia.Perfulandia.service.VentaService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -10,27 +11,43 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/v1/ventas")
 public class VentaController {
+
     @Autowired
     private VentaService ventaService;
 
+    // Obtener todas las ventas
     @GetMapping
-    public List<Venta> obtenerVentas(){
+    public List<Venta> obtenerTodas() {
         return ventaService.getVentas();
     }
+
+    // Obtener venta por ID
+    @GetMapping("/{id}")
+    public ResponseEntity<Venta> obtenerPorId(@PathVariable int id) {
+        return ventaService.getVenta(id)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
+    }
+
+    // Crear una nueva venta
     @PostMapping
-    public Venta crearVenta(@RequestBody Venta venta){
+    public Venta crear(@RequestBody Venta venta) {
         return ventaService.guardarVenta(venta);
     }
-    @GetMapping("{id}")
-    public Venta obtenerVentaPorId(@PathVariable int id){
-        return ventaService.buscarVentaPorId(id);
+
+    // Actualizar una venta existente
+    @PutMapping("/{id}")
+    public ResponseEntity<Venta> actualizar(@PathVariable int id, @RequestBody Venta venta) {
+        return ventaService.getVenta(id).map(v -> {
+            venta.setId(id);
+            return ResponseEntity.ok(ventaService.guardarVenta(venta));
+        }).orElse(ResponseEntity.notFound().build());
     }
-    @PutMapping("{id}")
-    public Venta editarVenta(@PathVariable int id, @RequestBody Venta venta){
-        return ventaService.editarVenta(venta);
-    }
-    @DeleteMapping("{id}")
-    public String eliminarVentaPorId(@PathVariable int id){
-        return ventaService.eliminarVenta(id);
+
+    // Eliminar venta por ID
+    @DeleteMapping("/{id}")
+    public ResponseEntity<String> eliminar(@PathVariable int id) {
+        ventaService.deleteVenta(id);
+        return ResponseEntity.ok("Venta eliminada con éxito");
     }
 }

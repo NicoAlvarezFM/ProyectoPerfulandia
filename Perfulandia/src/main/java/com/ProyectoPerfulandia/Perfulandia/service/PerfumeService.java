@@ -6,29 +6,37 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class PerfumeService {
+
     @Autowired
     private PerfumeRepository perfumeRepository;
 
+    // Listar todos los perfumes
     public List<Perfume> getPerfumes() {
-        return perfumeRepository.getListPerfumes();
+        return perfumeRepository.findAll();
     }
-    public Perfume getPerfume(int id) {
-        return perfumeRepository.buscarPorId(id);
+
+    // Buscar perfume por ID
+    public Optional<Perfume> getPerfume(int id) {
+        return perfumeRepository.findById(id);
     }
+
+    // Buscar perfume por SKU
     public Perfume getPerfumePorSku(int sku) {
-        return perfumeRepository.buscarPorSku(sku);
+        return perfumeRepository.findBySku(sku);
     }
+
+    // Guardar perfume
     public Perfume guardarPerfume(Perfume perfume) {
-        return perfumeRepository.guardarPerfume(perfume);
+        return perfumeRepository.save(perfume);
     }
-    public Perfume editarPerfume(Perfume perfume) {
-        return perfumeRepository.editarPerfume(perfume);
-    }
+
+    // Eliminar perfume por ID
     public String deletePerfume(int id) {
-        perfumeRepository.borrarPerfume(id);
-        return "Perfume eliminado con exito";
+        perfumeRepository.deleteById(id);
+        return "Perfume eliminado con éxito";
     }
 }
