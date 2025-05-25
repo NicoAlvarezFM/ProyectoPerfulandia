@@ -12,9 +12,10 @@ import java.util.List;
 
 public class Venta {
     private int id;
+    private String factura;
     private int clienteId;
-    private List<Integer> perfumeIds;
     private int pagoId;
+    private int perfumeId;
     private String fecha;
     private int total;
 }

@@ -12,6 +12,6 @@ public class Pago {
     private int id;
     private String metodo;
     private int monto;
-    private int fecha;
+    private String fecha;
     private String estado;
 }

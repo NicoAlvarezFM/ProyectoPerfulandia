@@ -9,9 +9,6 @@ import lombok.NoArgsConstructor;
 @Data
 
 public class Stock {
-    private String nombre;
-    private String descripcion;
-    private int precio;
-    private int cantidad;
     private int id;
+    private int cantidad;
 }
