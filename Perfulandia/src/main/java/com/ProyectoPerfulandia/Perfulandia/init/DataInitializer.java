@@ -36,7 +36,7 @@ public class DataInitializer implements CommandLineRunner {
         categoriaRepository.save(categoria);
 
         //CREACION DE CLIENTE
-        Cliente cliente = new Cliente(0,"203885318","Nicolás","Álvarez","nicolasalva@gmail.com",958693265,"Av. Las Torres");
+        Cliente cliente = new Cliente(0,"203885318","Nicolás","Álvarez","nicolas@gmail.com" ,958693265,"Av. Las Torres");
         clienteRepository.save(cliente);
 
         //CREACION DE PAGO

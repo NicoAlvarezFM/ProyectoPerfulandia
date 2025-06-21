@@ -30,8 +30,7 @@ public class CategoriaService {
     }
 
     // Eliminar categoría por ID
-    public String deleteCategoria(int id) {
+    public void deleteCategoria(int id) {
         categoriaRepository.deleteById(id);
-        return "Categoría eliminada con éxito";
     }
 }
