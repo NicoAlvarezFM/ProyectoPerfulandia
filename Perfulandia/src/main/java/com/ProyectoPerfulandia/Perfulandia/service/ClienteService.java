@@ -30,8 +30,7 @@ public class ClienteService {
     }
 
     // Eliminar cliente por ID
-    public String deleteCliente(int id) {
+    public void deleteCliente(int id) {
         clienteRepository.deleteById(id);
-        return "Cliente eliminado con éxito";
     }
 }

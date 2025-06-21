@@ -30,8 +30,7 @@ public class PagoService {
     }
 
     // Eliminar pago por ID
-    public String deletePago(int id) {
+    public void deletePago(int id) {
         pagoRepository.deleteById(id);
-        return "Pago eliminado con éxito";
     }
 }

@@ -30,8 +30,7 @@ public class VentaService {
     }
 
     // Eliminar venta por ID
-    public String deleteVenta(int id) {
+    public void deleteVenta(int id) {
         ventaRepository.deleteById(id);
-        return "Venta eliminada con éxito";
     }
 }

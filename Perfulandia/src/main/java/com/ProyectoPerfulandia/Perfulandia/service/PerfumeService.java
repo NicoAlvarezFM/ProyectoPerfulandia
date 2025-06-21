@@ -35,8 +35,7 @@ public class PerfumeService {
     }
 
     // Eliminar perfume por ID
-    public String deletePerfume(int id) {
+    public void deletePerfume(int id) {
         perfumeRepository.deleteById(id);
-        return "Perfume eliminado con éxito";
     }
 }

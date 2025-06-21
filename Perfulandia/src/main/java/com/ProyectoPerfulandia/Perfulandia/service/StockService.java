@@ -30,8 +30,7 @@ public class StockService {
     }
 
     // Eliminar stock por ID
-    public String deleteStock(int id) {
+    public void deleteStock(int id) {
         stockRepository.deleteById((long) id);
-        return "Stock eliminado con éxito";
     }
 }
