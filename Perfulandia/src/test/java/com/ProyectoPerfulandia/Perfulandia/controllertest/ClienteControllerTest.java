@@ -5,28 +5,35 @@ import com.ProyectoPerfulandia.Perfulandia.model.Cliente;
 import com.ProyectoPerfulandia.Perfulandia.service.ClienteService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.*;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.hateoas.CollectionModel;
+import org.springframework.hateoas.EntityModel;
 import org.springframework.http.ResponseEntity;
 
-import java.util.*;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
+@ExtendWith(MockitoExtension.class)
 class ClienteControllerTest {
-
-    @InjectMocks
-    private ClienteController clienteController;
 
     @Mock
     private ClienteService clienteService;
+
+    @InjectMocks
+    private ClienteController clienteController;
 
     private Cliente cliente;
 
     @BeforeEach
     void setUp() {
-        MockitoAnnotations.openMocks(this);
-        cliente = new Cliente(0, "203885318", "Nicolás", "Álvarez","nicolasalvarez@gmail.com" ,958693265, "Av. Las Torres");
+        cliente = new Cliente(0, "203885318", "Nicolás", "Álvarez", "nicolasalvarez@gmail.com", 958693265, "Av. Las Torres");
         cliente.setId(1);
         cliente.setNombre("Juan Pérez");
         cliente.setEmail("nicolasalvarez@gmail.com");
@@ -37,30 +44,33 @@ class ClienteControllerTest {
         List<Cliente> lista = List.of(cliente);
         when(clienteService.getClientes()).thenReturn(lista);
 
-        List<Cliente> resultado = clienteController.obtenerTodos();
+        CollectionModel<EntityModel<Cliente>> resultado = clienteController.obtenerTodos();
 
-        assertEquals(1, resultado.size());
-        assertEquals("Juan Pérez", resultado.get(0).getNombre());
+        List<Cliente> clientesExtraidos = resultado.getContent().stream()
+                .map(EntityModel::getContent)
+                .collect(Collectors.toList());
+
+        assertEquals(1, clientesExtraidos.size());
+        assertEquals("Juan Pérez", clientesExtraidos.get(0).getNombre());
     }
 
     @Test
     void testObtenerPorId_Existente() {
         when(clienteService.getCliente(1)).thenReturn(Optional.of(cliente));
 
-        ResponseEntity<Cliente> response = clienteController.obtenerPorId(1);
+        ResponseEntity<EntityModel<Cliente>> response = clienteController.obtenerPorId(1);
 
         assertEquals(200, response.getStatusCodeValue());
-        assertEquals("Juan Pérez", response.getBody().getNombre());
+        assertEquals("Juan Pérez", response.getBody().getContent().getNombre());
     }
 
     @Test
     void testObtenerPorId_NoExistente() {
         when(clienteService.getCliente(99)).thenReturn(Optional.empty());
 
-        ResponseEntity<Cliente> response = clienteController.obtenerPorId(99);
+        ResponseEntity<EntityModel<Cliente>> response = clienteController.obtenerPorId(99);
 
         assertEquals(404, response.getStatusCodeValue());
-        assertNull(response.getBody());
     }
 
     @Test

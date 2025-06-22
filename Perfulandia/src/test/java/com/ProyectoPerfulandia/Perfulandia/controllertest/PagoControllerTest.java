@@ -5,14 +5,22 @@ import com.ProyectoPerfulandia.Perfulandia.model.Pago;
 import com.ProyectoPerfulandia.Perfulandia.service.PagoService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.*;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.hateoas.CollectionModel;
+import org.springframework.hateoas.EntityModel;
 import org.springframework.http.ResponseEntity;
 
-import java.util.*;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
+@ExtendWith(MockitoExtension.class)
 class PagoControllerTest {
 
     @InjectMocks
@@ -25,7 +33,6 @@ class PagoControllerTest {
 
     @BeforeEach
     void setUp() {
-        MockitoAnnotations.openMocks(this);
         pago = new Pago();
         pago.setId(1);
         pago.setMetodo("Tarjeta");
@@ -37,30 +44,33 @@ class PagoControllerTest {
         List<Pago> lista = List.of(pago);
         when(pagoService.getPagos()).thenReturn(lista);
 
-        List<Pago> resultado = pagoController.obtenerTodos();
+        CollectionModel<EntityModel<Pago>> resultado = pagoController.obtenerTodos();
 
-        assertEquals(1, resultado.size());
-        assertEquals("Tarjeta", resultado.get(0).getMetodo());
+        List<Pago> pagosExtraidos = resultado.getContent().stream()
+                .map(EntityModel::getContent)
+                .collect(Collectors.toList());
+
+        assertEquals(1, pagosExtraidos.size());
+        assertEquals("Tarjeta", pagosExtraidos.get(0).getMetodo());
     }
 
     @Test
     void testObtenerPorId_Existente() {
         when(pagoService.getPago(1)).thenReturn(Optional.of(pago));
 
-        ResponseEntity<Pago> response = pagoController.obtenerPorId(1);
+        ResponseEntity<EntityModel<Pago>> response = pagoController.obtenerPorId(1);
 
         assertEquals(200, response.getStatusCodeValue());
-        assertEquals("Tarjeta", response.getBody().getMetodo());
+        assertEquals("Tarjeta", response.getBody().getContent().getMetodo());
     }
 
     @Test
     void testObtenerPorId_NoExistente() {
         when(pagoService.getPago(99)).thenReturn(Optional.empty());
 
-        ResponseEntity<Pago> response = pagoController.obtenerPorId(99);
+        ResponseEntity<EntityModel<Pago>> response = pagoController.obtenerPorId(99);
 
         assertEquals(404, response.getStatusCodeValue());
-        assertNull(response.getBody());
     }
 
     @Test
