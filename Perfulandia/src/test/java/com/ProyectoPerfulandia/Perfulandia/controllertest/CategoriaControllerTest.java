@@ -1,22 +1,26 @@
 package com.ProyectoPerfulandia.Perfulandia.controllertest;
 
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.*;
+import static org.junit.jupiter.api.Assertions.*;
+
 import com.ProyectoPerfulandia.Perfulandia.controller.CategoriaController;
 import com.ProyectoPerfulandia.Perfulandia.model.Categoria;
 import com.ProyectoPerfulandia.Perfulandia.service.CategoriaService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.springframework.hateoas.CollectionModel;
+import org.springframework.hateoas.EntityModel;
+import org.springframework.http.ResponseEntity;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.http.ResponseEntity;
 
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
-
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
+import java.util.stream.Collectors;
 
 @ExtendWith(MockitoExtension.class)
 class CategoriaControllerTest {
@@ -42,27 +46,31 @@ class CategoriaControllerTest {
         List<Categoria> categorias = Arrays.asList(categoria);
         when(categoriaService.getCategorias()).thenReturn(categorias);
 
-        List<Categoria> resultado = categoriaController.obtenerTodas();
+        CollectionModel<EntityModel<Categoria>> resultado = categoriaController.obtenerTodas();
 
-        assertEquals(1, resultado.size());
-        assertEquals("Fragancias", resultado.get(0).getNombre());
+        List<Categoria> categoriasExtraidas = resultado.getContent().stream()
+                .map(EntityModel::getContent)
+                .collect(Collectors.toList());
+
+        assertEquals(1, categoriasExtraidas.size());
+        assertEquals("Fragancias", categoriasExtraidas.get(0).getNombre());
     }
 
     @Test
     void testObtenerPorId_Existe() {
         when(categoriaService.getCategoria(1)).thenReturn(Optional.of(categoria));
 
-        ResponseEntity<Categoria> respuesta = categoriaController.obtenerPorId(1);
+        ResponseEntity<EntityModel<Categoria>> respuesta = categoriaController.obtenerPorId(1);
 
         assertTrue(respuesta.getStatusCode().is2xxSuccessful());
-        assertEquals("Fragancias", respuesta.getBody().getNombre());
+        assertEquals("Fragancias", respuesta.getBody().getContent().getNombre());
     }
 
     @Test
     void testObtenerPorId_NoExiste() {
         when(categoriaService.getCategoria(2)).thenReturn(Optional.empty());
 
-        ResponseEntity<Categoria> respuesta = categoriaController.obtenerPorId(2);
+        ResponseEntity<EntityModel<Categoria>> respuesta = categoriaController.obtenerPorId(2);
 
         assertTrue(respuesta.getStatusCode().is4xxClientError());
         assertEquals(404, respuesta.getStatusCode().value());
